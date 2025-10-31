@@ -14,7 +14,14 @@ export interface Character {
     gender: string; 
     origin: {
         name: string;
+        url: string;
     };
+    location: {
+        name: string;
+        url: string;
+    };
+    url: string;
+    created: string;
 }
 
 export interface ApiResponse {
@@ -48,6 +55,9 @@ export class CharacterService {
         return this.http.get<Response>(`${this.rickApi}/character/?name=${name}`);
     }
     
+    getCharacterLocation(url: string): Observable<any> {
+        return this.http.get<any>(url);
+    }
 
 
 }

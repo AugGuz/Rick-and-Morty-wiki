@@ -1,0 +1,116 @@
+@if (characterModalService.isOpen()) {
+  <div class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-gradient-to-br from-gray-900/95 via-gray-800/95 to-black/95 backdrop-blur-xl rounded-3xl border border-gray-600/50 shadow-2xl shadow-blue-500/20 max-w-3xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar relative">
+
+      <!-- Close Button -->
+      <button 
+        (click)="characterModalService.close()"
+        class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center bg-gradient-to-r from-red-500/20 to-pink-500/20 hover:from-red-500/40 hover:to-pink-500/40 border border-red-500/30 hover:border-red-400/50 rounded-full text-red-400 hover:text-red-300 transition-all duration-300 transform hover:scale-110 hover:rotate-90 z-20"
+        title="Close Modal">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+      
+      <!-- Modal Content -->
+      @if (characterModalService.character(); as character) {
+        <!-- Status Badge -->
+        <div class="absolute top-4 left-4 flex items-center space-x-2 bg-black/60 backdrop-blur-sm rounded-full px-4 py-2 z-10">
+          <span class="w-2 h-2 rounded-full" [ngClass]="{
+            'bg-green-400 shadow-green-400/50 shadow-lg': character.status === 'Alive',
+            'bg-red-400 shadow-red-400/50 shadow-lg': character.status === 'Dead', 
+            'bg-gray-400 shadow-gray-400/50 shadow-lg': character.status === 'unknown'
+          }"></span>
+          <span class="text-sm font-semibold text-white">{{ character.status }}</span>
+        </div>
+        
+        <div class="p-8 pt-16">
+          <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
+            
+            <!-- Character Image with Status Badge -->
+            <div class="relative w-48 h-48 md:w-64 md:h-64 flex-shrink-0">
+              <div class="w-full h-full rounded-full overflow-hidden border-4 border-green-500/50 shadow-lg">
+                <img [src]="character.image" [alt]="character.name" class="w-full h-full object-cover">
+              </div>
+            </div>
+
+            <!-- Character Details -->
+            <div class="text-center md:text-left flex-1">
+              <h2 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400 mb-6">
+                {{ character.name }}
+              </h2>
+              
+              <div class="space-y-3 text-lg">
+                <div>
+                  <span class="font-semibold text-blue-400">🧬 Species:</span>
+                  <span class="text-gray-300"> {{ character.species }}</span>
+                </div>
+                
+                @if (character.type) {
+                  <div>
+                    <span class="font-semibold text-indigo-400">🔬 Type:</span>
+                    <span class="text-gray-300"> {{ character.type }}</span>
+                  </div>
+                }
+                
+                <div>
+                  <span class="font-semibold text-purple-400">⚧ Gender:</span>
+                  <span class="text-gray-300"> {{ character.gender }}</span>
+                </div>
+                
+                <div>
+                  <span class="font-semibold text-yellow-400">🌍 Origin:</span>
+                  <span class="text-gray-300"> {{ character.origin.name }}</span>
+                </div>
+                
+                <div>
+                  <span class="font-semibold text-pink-400">📍 Location:</span>
+                  <span class="text-gray-300"> {{ character.location.name }}</span>
+                </div>
+                
+                <div>
+                  <span class="font-semibold text-cyan-400">📺 Episodes:</span>
+                  <span class="text-gray-300"> {{ character.episode.length }} appearances</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Episodes Section -->
+          <!-- Episodes Section -->
+          @if (characterModalService.episodes().length > 0) {
+            <div class="mt-8 border-t border-gray-700/50 pt-6">
+              <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-cyan-400 mb-4">
+                📺 Episode Appearances ({{ characterModalService.episodes().length }})
+              </h3>
+              <div class="max-h-64 overflow-y-auto custom-scrollbar">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  @for (episode of characterModalService.episodes(); track episode.id) {
+                    <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-lg p-3 border border-gray-700/30 hover:border-cyan-500/50 transition-all duration-200 cursor-pointer group">
+                      <div class="flex items-center space-x-2 mb-1">
+                        <span class="text-cyan-400 font-bold text-xs bg-cyan-400/10 px-2 py-1 rounded">
+                          {{ formatEpisodeCode(episode.episode) }}
+                        </span>
+                      </div>
+                      <span class="text-gray-300 text-sm block group-hover:text-white transition-colors">
+                        {{ episode.name }}
+                      </span>
+                      <span class="text-gray-500 text-xs block mt-1">
+                        📅 {{ episode.air_date }}
+                      </span>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="p-8 text-center">
+          <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-400 mx-auto"></div>
+          <p class="text-gray-300 mt-4">Loading character...</p>
+        </div>
+      }
+    </div>
+  </div>
+}

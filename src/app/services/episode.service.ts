@@ -37,6 +37,10 @@ export class EpisodeService {
     return this.http.get<Episode>(`${this.rickApi}/episode/${id}`);
   }
 
+  getMultipleEpisodes(ids: string): Observable<Episode[]> {
+    return this.http.get<Episode[]>(`${this.rickApi}/episode/${ids}`);
+  }
+
   searchEpisodes(name: string): Observable<EpisodeApiResponse> {
     return this.http.get<EpisodeApiResponse>(`${this.rickApi}/episode?name=${name}`);
   }

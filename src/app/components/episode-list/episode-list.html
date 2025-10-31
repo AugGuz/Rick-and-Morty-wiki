@@ -1,0 +1,97 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-8">
+  <div class="max-w-7xl mx-auto">
+    
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 mb-4">
+        📺 Episodes
+      </h1>
+      <p class="text-gray-300 text-xl">Explore all Rick and Morty episodes</p>
+    </div>
+
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="flex flex-col items-center justify-center py-20">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-400"></div>
+        <p class="text-gray-300 mt-4 text-lg">Loading episodes...</p>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (error()) {
+      <div class="bg-red-500/20 border border-red-500/50 rounded-xl p-6 text-center">
+        <p class="text-red-400 text-lg">{{ error() }}</p>
+        <button (click)="loadEpisodes()" 
+                class="mt-4 px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-300">
+          Try Again
+        </button>
+      </div>
+    }
+
+    <!-- Episodes Grid -->
+    @if (!loading() && hasEpisodes()) {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (episode of episodes(); track trackEpisode($index, episode)) {
+          <div (click)="openEpisodeModal(episode)"
+               class="group cursor-pointer bg-gradient-to-br from-gray-800/80 via-gray-900/80 to-black/80 backdrop-blur-sm rounded-xl border border-gray-700/50 hover:border-green-500/50 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20 overflow-hidden p-6">
+            
+            <!-- Episode Code Badge -->
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-green-400 font-bold text-2xl">{{ episode.episode }}</span>
+              <span class="bg-purple-500/20 text-purple-400 px-3 py-1 rounded-full text-sm font-semibold">
+                {{ getSeasonInfo(episode.episode) }}
+              </span>
+            </div>
+
+            <!-- Episode Title -->
+            <h3 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400 mb-3 group-hover:from-blue-400 group-hover:to-purple-400 transition-all duration-300">
+              {{ episode.name }}
+            </h3>
+
+            <!-- Air Date -->
+            <div class="flex items-center space-x-2 mb-3">
+              <span class="text-gray-400">📅</span>
+              <span class="text-gray-300">{{ episode.air_date }}</span>
+            </div>
+
+            <!-- Character Count -->
+            <div class="flex items-center space-x-2 mb-4">
+              <span class="text-gray-400">👥</span>
+              <span class="text-gray-300">{{ episode.characters.length }} characters</span>
+            </div>
+
+            <!-- Description -->
+            <p class="text-gray-400 text-sm italic">
+              {{ getEpisodeDescription(episode.episode) }}
+            </p>
+
+            <!-- Decorative Line -->
+            <div class="mt-4 h-px bg-gradient-to-r from-transparent via-green-500/50 to-transparent"></div>
+          </div>
+        }
+      </div>
+
+      <!-- Load More Button -->
+      @if (hasNextPage()) {
+        <div class="text-center mt-12">
+          <button (click)="loadMoreEpisodes()" 
+                  [disabled]="loadingMore()"
+                  class="px-8 py-3 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+            @if (loadingMore()) {
+              <span class="flex items-center space-x-2">
+                <div class="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                <span>Loading...</span>
+              </span>
+            } @else {
+              <span>Load More Episodes</span>
+            }
+          </button>
+        </div>
+      }
+    }
+
+  </div>
+</div>
+
+<!-- Episode Modal -->
+<app-episode-modal></app-episode-modal>
